@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Test utilities for the _typizator_ library.
+Test utilities for the _typizator_ library. You can organize your test data in simple tab- or space-separated tables...
 
 ## Installing
 
