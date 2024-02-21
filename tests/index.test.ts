@@ -51,7 +51,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test("Should always pass on empty test table", () => {
+    test.failing("Should fail on empty test table", () => {
         expect(tabularInput(tabS, `
             name           id
             "good will"    42
@@ -73,6 +73,20 @@ describe("Checking the Typizator test utilities", () => {
             name           id  d1   someDay
             "good will"     42  *   "2014-02-19"
              any            *   1   *
+            `
+        )
+    })
+
+    test.failing("Should fail on unknown columns", () => {
+        expect(tabularInput(tabS, `
+            name           id   someDay
+            "good will"    42   "2014-02-19"
+            any            0    "2024-02-19"
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name           id  d1   someDay         unknown
+            "good will"     42  *   "2014-02-19"    *
+             any            *   1   *               *
             `
         )
     })
