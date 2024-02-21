@@ -1,19 +1,19 @@
-import { ObjectOrFacadeS, transformToArray } from "typizator"
+import { ObjectOrFacadeS, SchemaDefinition, transformToArray } from "typizator"
 import JSONBig from "json-bigint"
 import { Table } from "console-table-printer";
 
 declare global {
     namespace jest {
         interface Matchers<R> {
-            toContainTable<T extends ObjectOrFacadeS<any>>
-                (schema: T, expected: string, title?: string): CustomMatcherResult;
+            toContainTable<T extends SchemaDefinition>
+                (schema: ObjectOrFacadeS<T>, expected: string, title?: string): CustomMatcherResult;
         }
     }
 }
 
 export const extendExpectWithToContainTable = () =>
     expect.extend({
-        toContainTable<T extends ObjectOrFacadeS<any>>(received: Object[], schema: T, expected: string, title?: string) {
+        toContainTable<T extends SchemaDefinition>(received: Object[], schema: ObjectOrFacadeS<T>, expected: string, title?: string) {
             const expectedArray = transformToArray(expected)
             if (expectedArray.length == 0) {
                 console.warn("Checking against an empty table always pass")

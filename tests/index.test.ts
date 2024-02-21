@@ -10,7 +10,7 @@ describe("Checking the Typizator test utilities", () => {
         someDay: dateS.optional,
         d1: intS.optional,
         d2: stringS.optional
-    })
+    }).notNull
 
     test("Should work with toContainTable", () => {
         expect(tabularInput(tabS, `
