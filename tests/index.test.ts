@@ -90,4 +90,18 @@ describe("Checking the Typizator test utilities", () => {
             `
         )
     })
+
+    test.failing("Should correctly inform on a wrong cell in the middle of the table", () => {
+        expect(tabularInput(tabS, `
+            name           id   someDay
+            "good will"    41   "2014-02-19"
+            any            0    "2024-02-19"
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name           id  d1   someDay
+            "good will"     42  *   "2014-02-19"
+             any            *   1   *
+            `
+        )
+    })
 })
