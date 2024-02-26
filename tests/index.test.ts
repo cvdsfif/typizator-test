@@ -5,6 +5,7 @@ describe("Checking the Typizator test utilities", () => {
     extendExpectWithToContainTable()
 
     const tabS = objectS({
+        idem: intS.optional,
         id: bigintS,
         name: stringS,
         someDay: dateS.optional,
@@ -93,14 +94,30 @@ describe("Checking the Typizator test utilities", () => {
 
     test.failing("Should correctly inform on a wrong cell in the middle of the table", () => {
         expect(tabularInput(tabS, `
-            name           id   someDay
-            "good will"    41   "2014-02-19"
-            any            0    "2024-02-19"
+            idem    name           id   someDay
+            0       "good will"    50   "2014-02-19"
+            0       "good will!"   41   "2014-02-19"
+            0       any            0    "2024-02-19"
             `, { d1: 1, d2: "q" }
         )).toContainTable(tabS, `
-            name           id  d1   someDay
-            "good will"     42  *   "2014-02-19"
-             any            *   1   *
+            idem    name           id  d1   someDay
+            0       "good will"     50  *   "2014-02-19"
+            0       "good will!"    42  *   "2014-02-19"
+            0       any             *   1   *
+            `
+        )
+    })
+
+    test("Should correctly work with null and undefined", () => {
+        expect(tabularInput(tabS, `
+            name           id   someDay
+            "good will"    42   undefined
+            any            null "2024-02-19"
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name           id   d1   someDay
+            "good will"    42   *   undefined
+             any           null 1   *
             `
         )
     })

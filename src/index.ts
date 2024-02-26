@@ -58,7 +58,7 @@ export const extendExpectWithToContainTable = () =>
                 const hasAnyMatch = received.some((receivedLine) =>
                     expectedMap.every(([key, value], idx) => {
                         const success = ("*" === value ||
-                            (value.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
+                            (value?.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
                             (receivedLine as any)[key] === value)
                         if (!success && idx > maxFailureIndex) {
                             lastFailure = { key, value: (receivedLine as any)[key] }
