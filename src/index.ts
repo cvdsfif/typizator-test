@@ -6,12 +6,36 @@ import { ColumnOptionsRaw } from "console-table-printer/dist/src/models/external
 declare global {
     namespace jest {
         interface Matchers<R> {
+            /**
+             * Used to check whether the received data (that is an array of objects) contains all the lines of the given table
+             * A star `*` matches any value of a record's field.
+             * The special `@ulid` value matches an ULID identifier
+             * null and undefined match the corresponding values, "null" and "undefined" match corresponding strings
+             * 
+             * Extra records in the received data are ignored
+             * 
+             * The table can contain a subset of the received data's fields but fails if an unknown field is listed
+             * 
+             * Always fails if the given table is empty
+             * 
+             * Prints the resulting table coloured in green for passed values and in red for failed ones
+             * @param schema Runtime type schema of the table's record type. See {@link https://www.npmjs.com/package/typizator | typizator} library for the definition
+             * @param expected Tab- or space-separated table expected. See the `tabularInput` methor from {@link https://www.npmjs.com/package/typizator | typizator} for more info
+             * @param title Optional table's title to print in the on-screen output
+             */
             toContainTable<T extends SchemaDefinition>
                 (schema: ObjectOrFacadeS<T>, expected: string, title?: string): CustomMatcherResult
+            /**
+             * Used to check whether the received string seems to be an ULID
+             */
+            toBeUlidish(): CustomMatcherResult
         }
     }
 }
 
+/**
+ * Adds to JEST `expect` a matcher allowing to test whether a tabular data received contains a given data
+ */
 export const extendExpectWithToContainTable = () =>
     expect.extend({
         toContainTable<T extends SchemaDefinition>(received: Object[], schema: ObjectOrFacadeS<T>, expected: string, title?: string) {
@@ -58,6 +82,7 @@ export const extendExpectWithToContainTable = () =>
                 const hasAnyMatch = received.some((receivedLine) =>
                     expectedMap.every(([key, value], idx) => {
                         const success = ("*" === value ||
+                            ("@ulid" === value && isUlidish((receivedLine as any)[key])) ||
                             (value?.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
                             (receivedLine as any)[key] === value)
                         if (!success && idx > maxFailureIndex) {
@@ -81,7 +106,22 @@ export const extendExpectWithToContainTable = () =>
             resultTable.printTable()
             return {
                 pass,
-                message: () => `Received ${JSONBig.stringify(received)} doesn't contain ${JSONBig.stringify(missingLine)}`
+                message: () => `Received ${JSONBig.stringify(received, null, 3)} doesn't contain ${JSONBig.stringify(missingLine, null, 3)}`
             }
         }
-    });
+    })
+
+const isUlidish = (received: string) => received.match(/[0-7][0-9A-HJKMNP-TV-Z]{25}/) !== null
+
+/**
+ * Adds to JEST `expect` a matcher checking whether the string received looks like an ULID
+ */
+export const extendExpectWithToBeUlidish = () =>
+    expect.extend({
+        toBeUlidish(received: string) {
+            return {
+                pass: isUlidish(received),
+                message: () => `Received ${received} result doesn't match the ULID pattern`
+            }
+        }
+    })

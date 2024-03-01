@@ -1,8 +1,9 @@
 import { bigintS, dateS, intS, objectS, stringS, tabularInput } from "typizator"
-import { extendExpectWithToContainTable } from "../src"
+import { extendExpectWithToBeUlidish, extendExpectWithToContainTable } from "../src"
 
 describe("Checking the Typizator test utilities", () => {
     extendExpectWithToContainTable()
+    extendExpectWithToBeUlidish()
 
     const tabS = objectS({
         idem: intS.optional,
@@ -120,5 +121,38 @@ describe("Checking the Typizator test utilities", () => {
              any           null 1   *
             `
         )
+    })
+
+    test("Should correctly match ULIDs", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C9      42
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name            id
+            @ulid           42   
+            `
+        )
+    })
+
+    test.failing("Should fail ULIDs mismatches", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C       42
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name            id
+            @ulid           42   
+            `
+        )
+    })
+
+    test("Should match ULIDs", () => {
+        expect("01HQWXKJFX9MC7SHB9ZCSRC0C9").toBeUlidish()
+        expect("01HQWXKJFX9MC7SHB9ZCSRC0").not.toBeUlidish()
+    })
+
+    test.failing("Should fail on wrong ULIDs", () => {
+        expect("01HQWXKJFX9MC7SHB9ZCSRC0").toBeUlidish()
     })
 })
