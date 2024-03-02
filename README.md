@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Test utilities for the _typizator_ library. You can organize your test data in simple tab- or space-separated tables...
+Test utilities for the _[typizator](https://www.npmjs.com/package/typizator)_ library. You can organize your test data in simple tab- or space-separated tables...
 
 ## Installing
 
