@@ -16,3 +16,5 @@ npm i typizator-test
 
 Nothing better than tests to show how the library works. Simply read [these tests](https://github.com/cvdsfif/typizator-test/blob/main/tests/index.test.ts) and you'll know how to use this.
 
+Tests are this library's purpose, so reading and understanding tests is really the right entry point... :)
+
