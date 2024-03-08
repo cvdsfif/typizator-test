@@ -1,4 +1,4 @@
-import { bigintS, dateS, intS, objectS, stringS, tabularInput } from "typizator"
+import { arrayS, bigintS, dateS, intS, objectS, stringS, tabularInput } from "typizator"
 import { extendExpectWithToBeUlidish, extendExpectWithToContainTable } from "../src"
 
 describe("Checking the Typizator test utilities", () => {
@@ -154,5 +154,12 @@ describe("Checking the Typizator test utilities", () => {
 
     test.failing("Should fail on wrong ULIDs", () => {
         expect("01HQWXKJFX9MC7SHB9ZCSRC0").toBeUlidish()
+    })
+
+    test.failing("Should correctly report the wrong type of source object", () => {
+        expect({}).toContainTable(tabS, `
+            id          name            audienceType
+            @ulid       "Combination"   combined
+        `)
     })
 })

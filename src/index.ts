@@ -39,6 +39,10 @@ declare global {
 export const extendExpectWithToContainTable = () =>
     expect.extend({
         toContainTable<T extends SchemaDefinition>(received: Object[], schema: ObjectOrFacadeS<T>, expected: string, title?: string) {
+            if (!Array.isArray(received)) return {
+                pass: false,
+                message: () => `Received object ${received} is not an array`
+            }
             const expectedArray = transformToArray(expected)
             if (expectedArray.length == 0) {
                 return { pass: false, message: () => "Cannot compare to an empty table" }
