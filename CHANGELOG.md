@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.2.0 - 2024-03-13
+
 ## 1.1.1 - 2024-03-08
 Correctly report the case when the tested object of `toContainTable` is not an array
 
