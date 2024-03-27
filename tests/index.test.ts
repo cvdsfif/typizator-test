@@ -233,7 +233,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test("Should accept simple comparisons", () => {
+    test("Should accept simple int comparisons", () => {
         expect(tabularInput(tabS, `
             name                            id  d1
             01HQWXKJFX9MC7SHB9ZCSRC0C0      0   42
@@ -248,7 +248,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test.failing("Should fail on simple < comparisons", () => {
+    test.failing("Should fail on simple < int comparisons", () => {
         expect(tabularInput(tabS, `
             name                            d1  id
             01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
@@ -259,7 +259,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test.failing("Should fail on simple > comparisons", () => {
+    test.failing("Should fail on simple > int comparisons", () => {
         expect(tabularInput(tabS, `
             name                            d1  id
             01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
@@ -270,7 +270,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test.failing("Should fail on simple <= comparisons", () => {
+    test.failing("Should fail on simple <= int comparisons", () => {
         expect(tabularInput(tabS, `
             name                            d1  id
             01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
@@ -281,7 +281,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test.failing("Should fail on simple > comparisons", () => {
+    test.failing("Should fail on simple >= int comparisons", () => {
         expect(tabularInput(tabS, `
             name                            d1  id
             01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
@@ -292,7 +292,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test.failing("Should fail on wrong number formats", () => {
+    test.failing("Should fail on wrong int number formats", () => {
         expect(tabularInput(tabS, `
             name                            d1  id
             01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
@@ -318,6 +318,70 @@ describe("Checking the Typizator test utilities", () => {
             @ulid           "<${refDate2}"
             @ulid           "<=${refDate1}"
             @ulid           ">=${refDate3}"   
+            `
+        )
+    })
+
+    test.failing("Should fail on simple < date comparisons", () => {
+        const refDate1 = new Date("2024-03-02 12:00Z")
+        const refDate2 = new Date("2024-03-02 13:00Z")
+        expect(tabularInput(tabS, `
+            name                            someDay         id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      "${refDate2}"   0
+            `,)).toContainTable(tabS, `
+            name            someDay
+            @ulid           "<${refDate1}"
+            `
+        )
+    })
+
+    test.failing("Should fail on simple > date comparisons", () => {
+        const refDate1 = new Date("2024-03-02 12:00Z")
+        const refDate2 = new Date("2024-03-02 13:00Z")
+        expect(tabularInput(tabS, `
+            name                            someDay         id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      "${refDate1}"   0
+            `,)).toContainTable(tabS, `
+            name            someDay
+            @ulid           ">${refDate2}"
+            `
+        )
+    })
+
+    test.failing("Should fail on simple <= date comparisons", () => {
+        const refDate1 = new Date("2024-03-02 12:00Z")
+        const refDate2 = new Date("2024-03-02 13:00Z")
+        expect(tabularInput(tabS, `
+            name                            someDay         id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      "${refDate2}"   0
+            `,)).toContainTable(tabS, `
+            name            someDay
+            @ulid           "<=${refDate1}"
+            `
+        )
+    })
+
+    test.failing("Should fail on simple >= date comparisons", () => {
+        const refDate1 = new Date("2024-03-02 12:00Z")
+        const refDate2 = new Date("2024-03-02 13:00Z")
+        expect(tabularInput(tabS, `
+            name                            someDay         id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      "${refDate1}"   0
+            `,)).toContainTable(tabS, `
+            name            someDay
+            @ulid           ">=${refDate2}"
+            `
+        )
+    })
+
+    test.failing("Should fail on wrong number formats", () => {
+        const refDate1 = new Date("2024-03-02 12:00Z")
+        expect(tabularInput(tabS, `
+            name                            someDay         id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      "${refDate1}"   0
+            `,)).toContainTable(tabS, `
+            name            someDay
+            @ulid           "<strange"
             `
         )
     })
