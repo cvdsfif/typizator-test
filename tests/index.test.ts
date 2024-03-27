@@ -162,4 +162,144 @@ describe("Checking the Typizator test utilities", () => {
             @ulid       "Combination"   combined
         `)
     })
+
+    test("Should accept simple comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42
+            01HQWXKJFX9MC7SHB9ZCSRC0C1      49
+            `,)).toContainTable(tabS, `
+            name            id
+            @ulid           <43
+            @ulid           >48
+            @ulid           <=42
+            @ulid           >=49   
+            `
+        )
+    })
+
+    test.failing("Should fail on simple < comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42
+            `,)).toContainTable(tabS, `
+            name            id
+            @ulid           <42
+            `
+        )
+    })
+
+    test.failing("Should fail on simple > comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42
+            `,)).toContainTable(tabS, `
+            name            id
+            @ulid           >42
+            `
+        )
+    })
+
+    test.failing("Should fail on simple <= comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42
+            `,)).toContainTable(tabS, `
+            name            id
+            @ulid           <=41
+            `
+        )
+    })
+
+    test.failing("Should fail on simple > comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42
+            `,)).toContainTable(tabS, `
+            name            id
+            @ulid           >=43
+            `
+        )
+    })
+
+    test.failing("Should fail on wrong number formats", () => {
+        expect(tabularInput(tabS, `
+            name                            id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42
+            `,)).toContainTable(tabS, `
+            name            id
+            @ulid           <strange
+            `
+        )
+    })
+
+    test("Should accept simple comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            id  d1
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      0   42
+            01HQWXKJFX9MC7SHB9ZCSRC0C1      0   49
+            `,)).toContainTable(tabS, `
+            name            d1
+            @ulid           <43
+            @ulid           >48
+            @ulid           <=42
+            @ulid           >=49   
+            `
+        )
+    })
+
+    test.failing("Should fail on simple < comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            d1  id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
+            `,)).toContainTable(tabS, `
+            name            d1
+            @ulid           <42
+            `
+        )
+    })
+
+    test.failing("Should fail on simple > comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            d1  id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
+            `,)).toContainTable(tabS, `
+            name            d1
+            @ulid           >42
+            `
+        )
+    })
+
+    test.failing("Should fail on simple <= comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            d1  id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
+            `,)).toContainTable(tabS, `
+            name            d1
+            @ulid           <=41
+            `
+        )
+    })
+
+    test.failing("Should fail on simple > comparisons", () => {
+        expect(tabularInput(tabS, `
+            name                            d1  id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
+            `,)).toContainTable(tabS, `
+            name            d1
+            @ulid           >=43
+            `
+        )
+    })
+
+    test.failing("Should fail on wrong number formats", () => {
+        expect(tabularInput(tabS, `
+            name                            d1  id
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      42  0
+            `,)).toContainTable(tabS, `
+            name            d1
+            @ulid           <strange
+            `
+        )
+    })
 })

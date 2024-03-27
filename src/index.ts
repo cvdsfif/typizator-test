@@ -33,6 +33,14 @@ declare global {
     }
 }
 
+const isBigInt = (value: string) => {
+    try {
+        BigInt(value)
+        return true
+    }
+    catch (e) { return false }
+}
+
 /**
  * Adds to JEST `expect` a matcher allowing to test whether a tabular data received contains a given data
  */
@@ -79,13 +87,35 @@ export const extendExpectWithToContainTable = () =>
                     rowContent[key] = expectedCell
                     const columnMetadata = schemas.get(key)!
                     return accumulator.set(key,
-                        expectedCell === "*" ? "*" : columnMetadata.unbox(expectedCell))
+                        expectedCell === "*" ?
+                            "*" :
+                            typeof expectedCell === "string" && (expectedCell.startsWith(">") || expectedCell.startsWith("<")) ?
+                                expectedCell :
+                                columnMetadata.unbox(expectedCell))
                 }, new Map<string, any>()))
                 let maxFailureIndex = -1
                 let lastFailure = { key: "", value: "" }
                 const hasAnyMatch = received.some((receivedLine) =>
                     expectedMap.every(([key, value], idx) => {
                         const success = ("*" === value ||
+                            (
+                                (typeof value) === "string" && (typeof (receivedLine as any)[key]) === "bigint" &&
+                                (
+                                    (value.startsWith("<=") && isBigInt(value.substring(2)) && BigInt(value.substring(2)).valueOf() >= ((receivedLine as any)[key] as bigint)) ||
+                                    (value.startsWith(">=") && isBigInt(value.substring(2)) && BigInt(value.substring(2)).valueOf() <= ((receivedLine as any)[key] as bigint)) ||
+                                    (value.startsWith("<") && isBigInt(value.substring(1)) && BigInt(value.substring(1)).valueOf() > ((receivedLine as any)[key] as bigint)) ||
+                                    (value.startsWith(">") && isBigInt(value.substring(1)) && BigInt(value.substring(1)).valueOf() < ((receivedLine as any)[key] as bigint))
+                                )
+                            ) ||
+                            (
+                                (typeof value) === "string" && (typeof (receivedLine as any)[key]) === "number" &&
+                                (
+                                    (value.startsWith("<=") && !Number.isNaN(value.substring(2)) && Number(value.substring(2)).valueOf() >= ((receivedLine as any)[key] as bigint)) ||
+                                    (value.startsWith(">=") && !Number.isNaN(value.substring(2)) && Number(value.substring(2)).valueOf() <= ((receivedLine as any)[key] as bigint)) ||
+                                    (value.startsWith("<") && !Number.isNaN(value.substring(1)) && Number(value.substring(1)).valueOf() > ((receivedLine as any)[key] as bigint)) ||
+                                    (value.startsWith(">") && !Number.isNaN(value.substring(1)) && Number(value.substring(1)).valueOf() < ((receivedLine as any)[key] as bigint))
+                                )
+                            ) ||
                             ("@ulid" === value && isUlidish((receivedLine as any)[key])) ||
                             (value?.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
                             (receivedLine as any)[key] === value)
