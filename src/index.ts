@@ -116,6 +116,15 @@ export const extendExpectWithToContainTable = () =>
                                     (value.startsWith(">") && !Number.isNaN(value.substring(1)) && Number(value.substring(1)).valueOf() < ((receivedLine as any)[key] as bigint))
                                 )
                             ) ||
+                            (
+                                (typeof value) === "string" && (((receivedLine as any)[key]) instanceof Date) &&
+                                (
+                                    (value.startsWith("<=") && !isNaN(Date.parse(value.substring(2))) && new Date(value.substring(2)).getTime() >= ((receivedLine as any)[key] as Date).getTime()) ||
+                                    (value.startsWith(">=") && !isNaN(Date.parse(value.substring(2))) && new Date(value.substring(2)).getTime() <= ((receivedLine as any)[key] as Date).getTime()) ||
+                                    (value.startsWith("<") && !isNaN(Date.parse(value.substring(1))) && new Date(value.substring(1)).getTime() > ((receivedLine as any)[key] as Date).getTime()) ||
+                                    (value.startsWith(">") && !isNaN(Date.parse(value.substring(1))) && new Date(value.substring(1)).getTime() < ((receivedLine as any)[key] as Date).getTime())
+                                )
+                            ) ||
                             ("@ulid" === value && isUlidish((receivedLine as any)[key])) ||
                             (value?.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
                             (receivedLine as any)[key] === value)

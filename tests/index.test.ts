@@ -302,4 +302,23 @@ describe("Checking the Typizator test utilities", () => {
             `
         )
     })
+
+    test("Should accept simple comparisons on dates", () => {
+        const refDate1 = new Date("2024-03-02 12:00Z")
+        const refDate2 = new Date("2024-03-02 13:00Z")
+        const refDate3 = new Date("2024-03-11 12:00Z")
+        const refDate4 = new Date("2024-03-11 11:00Z")
+        expect(tabularInput(tabS, `
+            name                            id  someDay
+            01HQWXKJFX9MC7SHB9ZCSRC0C0      0   "${refDate1}"
+            01HQWXKJFX9MC7SHB9ZCSRC0C1      0   "${refDate3}"
+            `,)).toContainTable(tabS, `
+            name            someDay
+            @ulid           ">${refDate4}"
+            @ulid           "<${refDate2}"
+            @ulid           "<=${refDate1}"
+            @ulid           ">=${refDate3}"   
+            `
+        )
+    })
 })
