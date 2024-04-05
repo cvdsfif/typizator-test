@@ -126,6 +126,7 @@ export const extendExpectWithToContainTable = () =>
                                 )
                             ) ||
                             ("@ulid" === value && isUlidish((receivedLine as any)[key])) ||
+                            ("@sha256" === value && ((receivedLine as any)[key])?.match(/\b[A-Fa-f0-9]{64}\b/)) ||
                             (value?.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
                             (receivedLine as any)[key] === value)
                         if (!success && idx > maxFailureIndex) {

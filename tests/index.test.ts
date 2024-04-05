@@ -385,4 +385,28 @@ describe("Checking the Typizator test utilities", () => {
             `
         )
     })
+
+    test("Should correctly match SHA256", () => {
+        expect(tabularInput(tabS, `
+            name                                                                  id
+            7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069      42
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name            id
+            @sha256         42   
+            `
+        )
+    })
+
+    test.failing("Should fail ULIDs mismatches", () => {
+        expect(tabularInput(tabS, `
+            name                                                                   id
+            7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d906        42
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name            id
+            @sha256         42   
+            `
+        )
+    })
 })
