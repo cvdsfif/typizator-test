@@ -123,6 +123,34 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
+    test.failing("Should fail on comparing null with something non-empty", () => {
+        expect(tabularInput(tabS, `
+            name           id   someDay
+            "good will"    42   undefined
+            any            null "2024-02-19"
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name           id   d1   someDay
+            "good will"    42   *   undefined
+             any           14   1   *
+            `
+        )
+    })
+
+    test.failing("Should fail on comparing something non-empty with null", () => {
+        expect(tabularInput(tabS, `
+            name           id   someDay
+            "good will"    42   undefined
+            any            14   "2024-02-19"
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name           id   d1   someDay
+            "good will"    42   *   undefined
+             any           null 1   *
+            `
+        )
+    })
+
     test("Should correctly match ULIDs", () => {
         expect(tabularInput(tabS, `
             name                            id
@@ -398,7 +426,7 @@ describe("Checking the Typizator test utilities", () => {
         )
     })
 
-    test.failing("Should fail ULIDs mismatches", () => {
+    test.failing("Should fail on sha256 mismatches", () => {
         expect(tabularInput(tabS, `
             name                                                                   id
             7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d906        42
@@ -406,6 +434,30 @@ describe("Checking the Typizator test utilities", () => {
         )).toContainTable(tabS, `
             name            id
             @sha256         42   
+            `
+        )
+    })
+
+    test("Should correctly match a blank string", () => {
+        expect(tabularInput(tabS, `
+            name               id
+            "${`  \t  `}"      42
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name                id
+            @blankString        42   
+            `
+        )
+    })
+
+    test.failing("Should fail on blankString mismatches", () => {
+        expect(tabularInput(tabS, `
+            name     id
+            .        42
+            `, { d1: 1, d2: "q" }
+        )).toContainTable(tabS, `
+            name                id
+            @blankString        42
             `
         )
     })

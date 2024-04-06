@@ -126,6 +126,7 @@ export const extendExpectWithToContainTable = () =>
                                 )
                             ) ||
                             ("@ulid" === value && isUlidish((receivedLine as any)[key])) ||
+                            ("@blankString" === value && ((receivedLine as any)[key])?.toString().trim() === "") ||
                             ("@sha256" === value && ((receivedLine as any)[key])?.match(/\b[A-Fa-f0-9]{64}\b/)) ||
                             (value?.getTime && (receivedLine as any)[key]?.getTime() === value.getTime()) ||
                             (receivedLine as any)[key] === value)
@@ -138,7 +139,7 @@ export const extendExpectWithToContainTable = () =>
                 )
                 if (!hasAnyMatch) {
                     missingLine = expectedLine
-                    rowContent[lastFailure.key] = `--> ${rowContent[lastFailure.key]} !== ${lastFailure.value} <--`
+                    rowContent[lastFailure.key] = `--> ${rowContent[lastFailure.key]?.toString().trim() ?? "EMPTY"} !== ${lastFailure.value?.toString().trim() ?? "EMPTY"} <--`
                     resultTable.addRow(rowContent, { color: "red" })
                 } else resultTable.addRow(rowContent, { color: "green" })
                 return hasAnyMatch
