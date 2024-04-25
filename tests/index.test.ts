@@ -1,4 +1,4 @@
-import { arrayS, bigintS, dateS, intS, objectS, stringS, tabularInput } from "typizator"
+import { arrayS, bigintS, dateS, floatS, intS, objectS, stringS, tabularInput } from "typizator"
 import { extendExpectWithToBeUlidish, extendExpectWithToContainTable } from "../src"
 
 describe("Checking the Typizator test utilities", () => {
@@ -460,5 +460,18 @@ describe("Checking the Typizator test utilities", () => {
             @blankString        42
             `
         )
+    })
+
+    test("Should compare with rounded value of a float source", () => {
+        const withFloatS = objectS({ flo: floatS })
+        expect(tabularInput(withFloatS, `
+            flo
+            42.1
+            68.8
+        `)).toContainTable(withFloatS, `
+            flo
+            ~42
+            ~69
+        `)
     })
 })

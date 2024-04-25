@@ -89,7 +89,8 @@ export const extendExpectWithToContainTable = () =>
                     return accumulator.set(key,
                         expectedCell === "*" ?
                             "*" :
-                            typeof expectedCell === "string" && (expectedCell.startsWith(">") || expectedCell.startsWith("<")) ?
+                            typeof expectedCell === "string" &&
+                                (expectedCell.startsWith(">") || expectedCell.startsWith("<") || expectedCell.startsWith("~")) ?
                                 expectedCell :
                                 columnMetadata.unbox(expectedCell))
                 }, new Map<string, any>()))
@@ -124,6 +125,11 @@ export const extendExpectWithToContainTable = () =>
                                     (value.startsWith("<") && !isNaN(Date.parse(value.substring(1))) && new Date(value.substring(1)).getTime() > ((receivedLine as any)[key] as Date).getTime()) ||
                                     (value.startsWith(">") && !isNaN(Date.parse(value.substring(1))) && new Date(value.substring(1)).getTime() < ((receivedLine as any)[key] as Date).getTime())
                                 )
+                            ) ||
+                            (
+                                (typeof value) === "string" &&
+                                value.startsWith("~") &&
+                                Number(value.substring(1)) === Math.round(Number((receivedLine as any)[key]))
                             ) ||
                             ("@ulid" === value && isUlidish((receivedLine as any)[key])) ||
                             ("@blankString" === value && ((receivedLine as any)[key])?.toString().trim() === "") ||
