@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && node build.js && tsc --emitDeclarationOnly",
-    "test": "tsc --build --clean && jest $npm_config_dir && $(yarn bin)/coverage-badges"
+    "test": "tsc --build --clean && jest $npm_config_dir && npx coverage-badges"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,7 @@
   "dependencies": {
     "console-table-printer": "^2.12.0",
     "json-bigint": "^1.0.0",
-    "typizator": "^3.2.1"
+    "typizator": "^4.0.0"
   },
   "engines": {
     "node": ">=20.0.0"
